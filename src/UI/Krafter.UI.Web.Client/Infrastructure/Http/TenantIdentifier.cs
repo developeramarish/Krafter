@@ -49,9 +49,9 @@ public class TenantIdentifier(IServiceProvider serviceProvider,IConfiguration co
             var strings = host.Split('.'); tenantIdentifier = strings.Length > 2 ? strings[0] : "api";
             remoteHostUrl = $"https://{tenantIdentifier}.{configuration["RemoteHostUrl"]}";
             clientBaseAddress = $"{uri.Scheme}://{uri.Host}:{uri.Port}";
-
         }
-        var rootDomain=host.Replace($"{tenantIdentifier}.", "");
+        var prefix = tenantIdentifier + ".";
+        var rootDomain = host.Substring(prefix.Length);
         return (tenantIdentifier, remoteHostUrl, rootDomain, clientBaseAddress);
     } 
 }
