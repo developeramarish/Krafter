@@ -35,7 +35,7 @@ Alternatively, log in with Google to create a new account.
 
 3) Copy DB connection string from Aspire Dashboard
 - Open Aspire Dashboard (usually https://localhost:17285)
-- In the **Resources** tab, expand the **postgres** resource (click the arrow ▼ if collapsed)
+- In the **Resources** tab, expand the **postgres** resource (click the arrow > if collapsed)
 - Find the **krafterDb** row (nested/indented under postgres)
 - Click the **three-dot menu (⋮)** in the Actions column of the krafterDb row
 - Select **"View details"** from the dropdown menu
@@ -284,10 +284,10 @@ This starts PostgreSQL and generates a dynamic connection string.
 3. **Locate the PostgreSQL Resource**
    - Look for the resource named **postgres** in the resources list (it has a database icon)
    - The State should show a green dot with "Running"
-   - Notice that **postgres** has a collapse/expand arrow (▼) next to it
+   - Notice that **postgres** has a collapse/expand arrow (>) next to it
 
 4. **Expand the postgres Resource**
-   - If not already expanded, click the arrow (▼) next to **postgres** to expand it
+   - If not already expanded, click the arrow (>) next to **postgres** to expand it
    - You'll see nested/indented child items appear: **krafterDb**, **postgresPassword**, and **postgresUsername**
 
 5. **Open krafterDb Details**
@@ -530,7 +530,7 @@ The project includes automated CI/CD pipelines that:
 
 **Troubleshooting: Can't Find the Connection String?**
 
-- ✅ Make sure you expanded the **postgres** resource (click the arrow ▼)
+- ✅ Make sure you expanded the **postgres** resource (click the arrow >)
 - ✅ Locate the **krafterDb** row indented under postgres
 - ✅ Click the **three-dot menu (⋮)** in the Actions column of the krafterDb row (far right)
 - ✅ Select **"View details"** from the dropdown menu (NOT "Console logs")
