@@ -12,7 +12,7 @@ using Backend.Features.Users._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Roles._Shared;
+using Krafter.Shared.Features.Roles;
 
 namespace Backend.Features.Roles;
 

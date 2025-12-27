@@ -1,18 +1,15 @@
 using System.Security.Claims;
 using Backend.Api;
 using Backend.Api.Authorization;
-using Backend.Common;
-using Backend.Features.Auth;
 using Backend.Features.Roles._Shared;
 using Backend.Infrastructure.Persistence;
-using FluentValidation;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Roles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Features.Roles;
 
@@ -23,7 +20,7 @@ public sealed class UpdateRolePermissions
         KrafterContext db) : IScopedHandler
     {
         public async Task<Response> UpdatePermissionsAsync(
-            Krafter.Shared.Features.Roles.UpdateRolePermissions.UpdateRolePermissionsRequest request,
+            UpdateRolePermissionsRequest request,
             CancellationToken cancellationToken)
         {
             KrafterRole? role = await roleManager.FindByIdAsync(request.RoleId);
@@ -84,7 +81,7 @@ public sealed class UpdateRolePermissions
                 .AddFluentValidationFilter();
 
             roleGroup.MapPut("/update-permissions", async (
-                    [FromBody] Krafter.Shared.Features.Roles.UpdateRolePermissions.UpdateRolePermissionsRequest request,
+                    [FromBody] UpdateRolePermissionsRequest request,
                     [FromServices] Handler handler,
                     CancellationToken cancellationToken) =>
                 {

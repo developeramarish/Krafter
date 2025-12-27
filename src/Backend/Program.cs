@@ -14,7 +14,7 @@ using Krafter.Aspire.ServiceDefaults;
 using Krafter.Shared.Common.Auth.Permissions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
-using GetToken = Krafter.Shared.Features.Auth.GetToken;
+using Krafter.Shared.Features.Auth;
 
 namespace Backend;
 
@@ -63,7 +63,7 @@ public static class Program
 
         // FluentValidation
         builder.AddFluentValidationEndpointFilter();
-        builder.Services.AddValidatorsFromAssemblyContaining<GetToken.TokenRequestValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<TokenRequestValidator>();
 
         // Background Jobs (TickerQ)
         builder.Services.AddBackgroundJobs();

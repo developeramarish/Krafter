@@ -1,16 +1,15 @@
 using Backend.Api;
 using Backend.Api.Authorization;
 using Backend.Application.Common;
-using Backend.Common;
 using Backend.Common.Interfaces;
 using Backend.Features.Roles._Shared;
 using Backend.Features.Users._Shared;
 using Backend.Infrastructure.Persistence;
-using FluentValidation;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Roles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +24,7 @@ public sealed class CreateOrUpdateRole
         KrafterContext db,
         ITenantGetterService tenantGetterService) : IScopedHandler
     {
-        public async Task<Response> CreateOrUpdateAsync(
-            Krafter.Shared.Features.Roles.CreateOrUpdateRole.CreateOrUpdateRoleRequest request)
+        public async Task<Response> CreateOrUpdateAsync(CreateOrUpdateRoleRequest request)
         {
             KrafterRole role;
             bool isNewRole = string.IsNullOrEmpty(request.Id);
@@ -97,7 +95,6 @@ public sealed class CreateOrUpdateRole
                         !request.Permissions.Contains(krafterRoleClaim.ClaimValue))
                     {
                         krafterRoleClaim.IsDeleted = true;
-
                         permissionsToRemove.Add(krafterRoleClaim);
                     }
                 }
@@ -108,7 +105,6 @@ public sealed class CreateOrUpdateRole
                         request.Permissions.Contains(krafterRoleClaim.ClaimValue))
                     {
                         krafterRoleClaim.IsDeleted = false;
-
                         permissionsToUpdate.Add(krafterRoleClaim);
                     }
                 }
@@ -143,7 +139,6 @@ public sealed class CreateOrUpdateRole
         }
     }
 
-
     public sealed class Route : IRouteRegistrar
     {
         public void MapRoute(IEndpointRouteBuilder endpointRouteBuilder)
@@ -152,10 +147,10 @@ public sealed class CreateOrUpdateRole
                 .AddFluentValidationFilter();
 
             roleGroup.MapPost("/create-or-update", async
-                ([FromBody] Krafter.Shared.Features.Roles.CreateOrUpdateRole.CreateOrUpdateRoleRequest createUserRequest,
+                ([FromBody] CreateOrUpdateRoleRequest request,
                     [FromServices] Handler roleService) =>
                 {
-                    Response res = await roleService.CreateOrUpdateAsync(createUserRequest);
+                    Response res = await roleService.CreateOrUpdateAsync(request);
                     return TypedResults.Ok(res);
                 })
                 .Produces<Response>()

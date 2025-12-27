@@ -1,5 +1,5 @@
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Users._Shared;
+using Krafter.Shared.Features.Users;
 
 namespace Backend.Features.Users._Shared;
 

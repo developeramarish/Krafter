@@ -6,6 +6,7 @@ using Backend.Common.Interfaces.Auth;
 using Backend.Features.Users._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,8 +20,7 @@ public sealed class ChangePassword
         ITenantGetterService tenantGetterService,
         IJobService jobService) : IScopedHandler
     {
-        public async Task<Response> ChangePasswordAsync(
-            Krafter.Shared.Features.Users.ChangePassword.ChangePasswordRequest request)
+        public async Task<Response> ChangePasswordAsync(ChangePasswordRequest request)
         {
             KrafterUser? user = await userManager.FindByIdAsync(currentUser.GetUserId());
             if (user is null)
@@ -70,7 +70,7 @@ public sealed class ChangePassword
                 .AddFluentValidationFilter();
 
             userGroup.MapPost("/change-password", async (
-                    [FromBody] Krafter.Shared.Features.Users.ChangePassword.ChangePasswordRequest request,
+                    [FromBody] ChangePasswordRequest request,
                     [FromServices] Handler handler) =>
                 {
                     Response res = await handler.ChangePasswordAsync(request);

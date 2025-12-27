@@ -12,6 +12,7 @@ using Backend.Features.Tenants._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Tenants;
 
 namespace Backend.Features.Tenants;
 
@@ -19,7 +20,7 @@ public sealed class Get
 {
     internal sealed class Handler(TenantDbContext dbContext) : IScopedHandler
     {
-        public async Task<Response<PaginationResponse<Krafter.Shared.Features.Tenants.Get.TenantDto>>> Get(
+        public async Task<Response<PaginationResponse<TenantDto>>> Get(
             GetRequestInput requestInput,
             CancellationToken cancellationToken)
         {
@@ -29,7 +30,7 @@ public sealed class Get
                 predicate = predicate.And(c => c.Id == requestInput.Id);
             }
 
-            IQueryable<Krafter.Shared.Features.Tenants.Get.TenantDto> queryableProducts = null;
+            IQueryable<TenantDto> queryableProducts = null;
             if (requestInput.History)
             {
                 if (requestInput.Filter == "CreatedOn desc")
@@ -39,7 +40,7 @@ public sealed class Get
 
                 predicate = predicate.And(c => EF.Property<DateTime>(c, "PeriodEnd") < DateTime.UtcNow);
                 queryableProducts = dbContext.Tenants.TemporalAll().Where(predicate)
-                    .Select(x => new Krafter.Shared.Features.Tenants.Get.TenantDto
+                    .Select(x => new TenantDto
                     {
                         Id = x.Id,
                         Name = x.Name,
@@ -61,7 +62,7 @@ public sealed class Get
                 {
                     predicate = predicate.And(c => c.IsDeleted == true);
                     queryableProducts = dbContext.Tenants.IgnoreQueryFilters().Where(predicate)
-                        .Select(x => new Krafter.Shared.Features.Tenants.Get.TenantDto
+                        .Select(x => new TenantDto
                         {
                             Id = x.Id,
                             Name = x.Name,
@@ -78,7 +79,7 @@ public sealed class Get
                 else
                 {
                     queryableProducts = dbContext.Tenants.Where(predicate)
-                        .Select(x => new Krafter.Shared.Features.Tenants.Get.TenantDto
+                        .Select(x => new TenantDto
                         {
                             Id = x.Id,
                             Name = x.Name,
@@ -104,12 +105,12 @@ public sealed class Get
                 queryableProducts = queryableProducts.OrderBy(requestInput.OrderBy);
             }
 
-            List<Krafter.Shared.Features.Tenants.Get.TenantDto> res =
+            List<TenantDto> res =
                 await queryableProducts.PageBy(requestInput).ToListAsync(cancellationToken);
 
-            return new Response<PaginationResponse<Krafter.Shared.Features.Tenants.Get.TenantDto>>
+            return new Response<PaginationResponse<TenantDto>>
             {
-                Data = new PaginationResponse<Krafter.Shared.Features.Tenants.Get.TenantDto>(res,
+                Data = new PaginationResponse<TenantDto>(res,
                     await queryableProducts.CountAsync(cancellationToken),
                     requestInput.SkipCount, requestInput.MaxResultCount)
             };
@@ -127,11 +128,11 @@ public sealed class Get
                     [FromServices] Handler service, [AsParameters] GetRequestInput requestInput,
                     CancellationToken cancellationToken) =>
                 {
-                    Response<PaginationResponse<Krafter.Shared.Features.Tenants.Get.TenantDto>> res =
+                    Response<PaginationResponse<TenantDto>> res =
                         await service.Get(requestInput, cancellationToken);
                     return Results.Json(res, statusCode: res.StatusCode);
                 })
-                .Produces<Response<PaginationResponse<Krafter.Shared.Features.Tenants.Get.TenantDto>>>()
+                .Produces<Response<PaginationResponse<TenantDto>>>()
                 .MustHavePermission(KrafterAction.View, KrafterResource.Tenants);
         }
     }

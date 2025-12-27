@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.AppInfo;
 
 namespace Backend.Features.AppInfo;
 
@@ -28,7 +29,7 @@ public sealed class Get
             var res = new Response<string>
             {
                 Data =
-                    $"Backend version {Krafter.Shared.Features.AppInfo.Get.BuildInfo.Build}, built on {Krafter.Shared.Features.AppInfo.Get.BuildInfo.DateTimeUtc}, running on {RuntimeInformation.FrameworkDescription}"
+                    $"Backend version {BuildInfo.Build}, built on {BuildInfo.DateTimeUtc}, running on {RuntimeInformation.FrameworkDescription}"
             };
             return res;
         }

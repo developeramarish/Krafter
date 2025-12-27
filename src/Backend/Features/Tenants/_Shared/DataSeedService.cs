@@ -9,9 +9,10 @@ using Backend.Infrastructure.Persistence;
 using Krafter.Shared.Common.Auth;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Roles;
+using Krafter.Shared.Features.Tenants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static Backend.Features.Tenants.SeedBasicData;
 
 namespace Backend.Features.Tenants._Shared;
 
@@ -23,8 +24,7 @@ public class DataSeedService(
     RoleManager<KrafterRole> roleManager,
     UserManager<KrafterUser> userManager) : IScopedHandler
 {
-    public async Task<Response> SeedBasicData(
-        Krafter.Shared.Features.Tenants.SeedBasicData.SeedDataRequestInput requestInput)
+    public async Task<Response> SeedBasicData(SeedDataRequest request)
     {
         CurrentTenantDetails currentTenantResponse = tenantGetterService.Tenant;
 
@@ -131,7 +131,6 @@ public class DataSeedService(
                     IsActive = true,
                     IsOwner = true
                 };
-                //generate aspnet core valid password
                 password = PasswordGenerator.GeneratePassword();
             }
 

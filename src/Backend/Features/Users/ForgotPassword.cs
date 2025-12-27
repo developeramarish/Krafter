@@ -1,14 +1,12 @@
 using Backend.Api;
-using Backend.Api.Authorization;
 using Backend.Application.BackgroundJobs;
 using Backend.Application.Notifications;
-using Backend.Common;
 using Backend.Common.Interfaces;
 using Backend.Features.Users._Shared;
 using Backend.Infrastructure.Persistence;
-using FluentValidation;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -22,8 +20,7 @@ public sealed class ForgotPassword
         ITenantGetterService tenantGetterService,
         IJobService jobService) : IScopedHandler
     {
-        public async Task<Response> ForgotPasswordAsync(
-            Krafter.Shared.Features.Users.ForgotPassword.ForgotPasswordRequest request)
+        public async Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request)
         {
             KrafterUser? user = await userManager.FindByEmailAsync(request.Email.Normalize());
             if (user is null)
@@ -53,7 +50,6 @@ public sealed class ForgotPassword
         }
     }
 
-
     public sealed class Route : IRouteRegistrar
     {
         public void MapRoute(IEndpointRouteBuilder endpointRouteBuilder)
@@ -62,7 +58,7 @@ public sealed class ForgotPassword
                 .AddFluentValidationFilter();
 
             userGroup.MapPost("/forgot-password", async (
-                    [FromBody] Krafter.Shared.Features.Users.ForgotPassword.ForgotPasswordRequest request,
+                    [FromBody] ForgotPasswordRequest request,
                     [FromServices] Handler handler) =>
                 {
                     Response res = await handler.ForgotPasswordAsync(request);

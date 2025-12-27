@@ -1,8 +1,8 @@
 using Backend.Api;
-using Backend.Common;
 using Backend.Features.Tenants._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Tenants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Features.Tenants;
@@ -15,10 +15,10 @@ public sealed class SeedBasicData
         {
             RouteGroupBuilder tenant = endpointRouteBuilder.MapGroup(KrafterRoute.Tenants).AddFluentValidationFilter();
             tenant.MapPost("/seed-data", async
-                ([FromBody] Krafter.Shared.Features.Tenants.SeedBasicData.SeedDataRequestInput requestInput,
+                ([FromBody] SeedDataRequest request,
                     [FromServices] DataSeedService tenantSeedService) =>
                 {
-                    Response res = await tenantSeedService.SeedBasicData(requestInput);
+                    Response res = await tenantSeedService.SeedBasicData(request);
                     return Results.Json(res, statusCode: res.StatusCode);
                 })
                 .Produces<Response>();

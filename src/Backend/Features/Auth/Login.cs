@@ -6,7 +6,7 @@ using Backend.Features.Users._Shared;
 using Backend.Infrastructure.Persistence;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Auth._Shared;
+using Krafter.Shared.Features.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -27,16 +27,16 @@ public sealed class GetToken
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
         public async Task<Response<TokenResponse>> GetTokenAsync(
-            Krafter.Shared.Features.Auth.GetToken.TokenRequestInput requestInput, string ipAddress,
+            TokenRequest request, string ipAddress,
             CancellationToken cancellationToken)
         {
-            KrafterUser? user = await userManager.FindByEmailAsync(requestInput.Email.Trim().Normalize());
+            KrafterUser? user = await userManager.FindByEmailAsync(request.Email.Trim().Normalize());
             if (user is null)
             {
                 throw new UnauthorizedException("Invalid Email or Password");
             }
 
-            if (!await userManager.CheckPasswordAsync(user, requestInput.Password))
+            if (!await userManager.CheckPasswordAsync(user, request.Password))
             {
                 throw new KrafterException("Invalid Email or Password");
             }
@@ -66,7 +66,7 @@ public sealed class GetToken
                 .AddFluentValidationFilter();
 
             productGroup.MapPost("/create", async
-            ([FromBody] Krafter.Shared.Features.Auth.GetToken.TokenRequestInput request, HttpContext context,
+            ([FromBody] TokenRequest request, HttpContext context,
                 [FromServices] Handler handler) =>
             {
                 string? ipAddress = GetIpAddress(context);

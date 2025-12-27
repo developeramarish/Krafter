@@ -1,5 +1,8 @@
-namespace Krafter.Shared.Features.Auth._Shared;
+namespace Krafter.Shared.Features.Auth;
 
+/// <summary>
+/// Response model containing authentication tokens.
+/// </summary>
 public record TokenResponse(
     string Token,
     string RefreshToken,

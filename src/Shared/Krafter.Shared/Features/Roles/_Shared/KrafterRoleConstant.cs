@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Krafter.Shared.Features.Roles._Shared;
+namespace Krafter.Shared.Features.Roles;
 
 public static class KrafterRoleConstant
 {

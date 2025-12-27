@@ -1,9 +1,8 @@
 using Backend.Api;
-using Backend.Common;
 using Backend.Features.Users._Shared;
-using FluentValidation;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,8 +12,7 @@ public sealed class ResetPassword
 {
     internal sealed class Handler(UserManager<KrafterUser> userManager) : IScopedHandler
     {
-        public async Task<Response> ResetPasswordAsync(
-            Krafter.Shared.Features.Users.ResetPassword.ResetPasswordRequest request)
+        public async Task<Response> ResetPasswordAsync(ResetPasswordRequest request)
         {
             KrafterUser? user = await userManager.FindByEmailAsync(request.Email?.Normalize()!);
             if (user is null)
@@ -40,7 +38,6 @@ public sealed class ResetPassword
         }
     }
 
-
     public sealed class Route : IRouteRegistrar
     {
         public void MapRoute(IEndpointRouteBuilder endpointRouteBuilder)
@@ -49,14 +46,13 @@ public sealed class ResetPassword
                 .AddFluentValidationFilter();
 
             userGroup.MapPost("/reset-password", async (
-                    [FromBody] Krafter.Shared.Features.Users.ResetPassword.ResetPasswordRequest request,
+                    [FromBody] ResetPasswordRequest request,
                     [FromServices] Handler handler) =>
                 {
                     Response res = await handler.ResetPasswordAsync(request);
                     return Results.Json(res, statusCode: res.StatusCode);
                 })
-                .Produces<Response>()
-                ;
+                .Produces<Response>();
         }
     }
 }

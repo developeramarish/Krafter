@@ -8,10 +8,10 @@ using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
-using System.Net;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
+using Krafter.Shared.Features.Users;
 
 namespace Backend.Features.Users;
 
@@ -19,7 +19,7 @@ public sealed class GetUsers
 {
     internal sealed class Handler(KrafterContext db) : IScopedHandler
     {
-        public async Task<Response<PaginationResponse<Krafter.Shared.Features.Users.GetUsers.UserDto>>> Get(
+        public async Task<Response<PaginationResponse<UserDto>>> Get(
             [AsParameters] GetRequestInput requestInput,
             CancellationToken cancellationToken)
         {
@@ -30,9 +30,9 @@ public sealed class GetUsers
                 predicate = predicate.And(c => c.Id == requestInput.Id);
             }
 
-            IQueryable<Krafter.Shared.Features.Users.GetUsers.UserDto> query = db.Users
+            IQueryable<UserDto> query = db.Users
                 .Where(predicate)
-                .Select(x => new Krafter.Shared.Features.Users.GetUsers.UserDto
+                .Select(x => new UserDto
                 {
                     Id = x.Id,
                     UserName = x.UserName,
@@ -96,19 +96,19 @@ public sealed class GetUsers
                 query = query.OrderBy(requestInput.OrderBy);
             }
 
-            List<Krafter.Shared.Features.Users.GetUsers.UserDto> items = await query
+            List<UserDto> items = await query
                 .PageBy(requestInput)
                 .ToListAsync(cancellationToken);
 
             int totalCount = await query.CountAsync(cancellationToken);
 
-            var result = new PaginationResponse<Krafter.Shared.Features.Users.GetUsers.UserDto>(
+            var result = new PaginationResponse<UserDto>(
                 items,
                 totalCount,
                 requestInput.SkipCount,
                 requestInput.MaxResultCount);
 
-            return new Response<PaginationResponse<Krafter.Shared.Features.Users.GetUsers.UserDto>>
+            return new Response<PaginationResponse<UserDto>>
             {
                 Data = result, IsError = false
             };
@@ -127,11 +127,11 @@ public sealed class GetUsers
                     [AsParameters] GetRequestInput requestInput,
                     CancellationToken cancellationToken) =>
                 {
-                    Response<PaginationResponse<Krafter.Shared.Features.Users.GetUsers.UserDto>> res =
+                    Response<PaginationResponse<UserDto>> res =
                         await handler.Get(requestInput, cancellationToken);
                     return Results.Json(res, statusCode: res.StatusCode);
                 })
-                .Produces<Response<PaginationResponse<Krafter.Shared.Features.Users.GetUsers.UserDto>>>()
+                .Produces<Response<PaginationResponse<UserDto>>>()
                 .MustHavePermission(KrafterAction.View, KrafterResource.Users);
         }
     }
