@@ -2,7 +2,7 @@ using Backend.Api;
 using Backend.Features.Tenants._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Tenants;
+using Krafter.Shared.Contracts.Tenants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Features.Tenants;

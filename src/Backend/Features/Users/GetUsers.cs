@@ -11,7 +11,7 @@ using System.Linq.Dynamic.Core;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Users;
+using Krafter.Shared.Contracts.Users;
 
 namespace Backend.Features.Users;
 

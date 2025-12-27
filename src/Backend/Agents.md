@@ -6,11 +6,12 @@
 Every feature operation MUST be self-contained in a **single file**:
 ```
 Features/<Feature>/<Operation>.cs
-├── Request      (DTO)
 ├── Handler      (Business Logic)
-├── Validator    (FluentValidation)
+├── Validator    (FluentValidation - if not in Shared)
 └── Route        (Endpoint Mapping)
 ```
+
+**Note**: Request/Response DTOs are in `src/Shared/Krafter.Shared/Contracts/<Feature>/`
 
 ## 2. Decision Tree: Where Does This Code Go?
 
@@ -18,6 +19,10 @@ Features/<Feature>/<Operation>.cs
 ┌─────────────────────────────────────────────────────────────┐
 │ What are you adding?                                        │
 ├─────────────────────────────────────────────────────────────┤
+│ Request/Response DTO (shared with UI)?                      │
+│   → src/Krafter.Shared/Contracts/<Feature>/                 │
+│   → Namespace: Krafter.Shared.Contracts.<Feature>           │
+│                                                             │
 │ Feature operation (CRUD, business logic)?                   │
 │   → Features/<Feature>/<Operation>.cs                       │
 │                                                             │
@@ -31,7 +36,7 @@ Features/<Feature>/<Operation>.cs
 │   → Infrastructure/ or Common/                              │
 │                                                             │
 │ Permission definition?                                      │
-│   → Common/Auth/Permissions/KrafterPermissions.cs           │
+│   → src/Shared/Krafter.Shared/Common/Auth/Permissions/      │
 │                                                             │
 │ EF Core configuration?                                      │
 │   → Infrastructure/Persistence/Configurations/              │
@@ -43,14 +48,35 @@ Features/<Feature>/<Operation>.cs
 
 ## 3. Directory Structure
 ```
+src/Krafter.Shared/              # Shared contracts library
+├── Contracts/                   # API DTOs (shared with UI)
+│   ├── Auth/
+│   │   ├── TokenRequest.cs      ← Request + Validator
+│   │   ├── TokenResponse.cs
+│   │   └── GoogleAuthRequest.cs
+│   ├── Users/
+│   │   ├── UserDto.cs
+│   │   ├── CreateUserRequest.cs ← Request + Validator
+│   │   └── ChangePasswordRequest.cs
+│   ├── Roles/
+│   │   ├── RoleDto.cs
+│   │   ├── CreateOrUpdateRoleRequest.cs
+│   │   └── KrafterRoleConstant.cs
+│   └── Tenants/
+│       ├── TenantDto.cs
+│       └── CreateOrUpdateTenantRequest.cs
+└── Common/                      # Shared utilities
+    ├── Auth/Permissions/        # Permission definitions
+    └── Models/                  # Common models (Response, etc.)
+
 src/Backend/
 ├── Features/
 │   ├── Users/
-│   │   ├── CreateOrUpdateUser.cs    ← Operation slice
+│   │   ├── CreateOrUpdateUser.cs    ← Operation slice (uses Shared DTOs)
 │   │   ├── DeleteUser.cs
 │   │   ├── GetUsers.cs
 │   │   └── _Shared/
-│   │       ├── KrafterUser.cs       ← Entity
+│   │       ├── KrafterUser.cs       ← Entity (Backend only)
 │   │       ├── IUserService.cs      ← Interface
 │   │       └── UserService.cs       ← Implementation
 │   └── <YourFeature>/
@@ -61,11 +87,7 @@ src/Backend/
 │   │   ├── KrafterContext.cs        ← Main DbContext
 │   │   └── Configurations/          ← EF configurations
 │   └── BackgroundJobs/
-├── Common/
-│   ├── Auth/Permissions/
-│   │   └── KrafterPermissions.cs    ← All permissions
-│   └── Models/
-│       └── Response.cs              ← Response wrapper
+├── Common/                          ← Backend-specific utilities
 └── Api/
     ├── Middleware/
     └── Configuration/

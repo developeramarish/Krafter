@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Auth;
-using Krafter.Shared.Features.Roles;
+using Krafter.Shared.Contracts.Auth;
+using Krafter.Shared.Contracts.Roles;
 
 namespace Backend.Features.Auth;
 

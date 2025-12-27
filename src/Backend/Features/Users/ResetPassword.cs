@@ -2,7 +2,7 @@ using Backend.Api;
 using Backend.Features.Users._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Users;
+using Krafter.Shared.Contracts.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

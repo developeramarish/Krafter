@@ -14,7 +14,7 @@ using Krafter.Aspire.ServiceDefaults;
 using Krafter.Shared.Common.Auth.Permissions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
-using Krafter.Shared.Features.Auth;
+using Krafter.Shared.Contracts.Auth;
 
 namespace Backend;
 

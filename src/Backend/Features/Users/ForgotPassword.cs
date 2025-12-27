@@ -6,7 +6,7 @@ using Backend.Features.Users._Shared;
 using Backend.Infrastructure.Persistence;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Users;
+using Krafter.Shared.Contracts.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;

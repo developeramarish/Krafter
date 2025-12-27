@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.AppInfo;
+using Krafter.Shared.Contracts.AppInfo;
 
 namespace Backend.Features.AppInfo;
 

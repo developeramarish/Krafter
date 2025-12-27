@@ -58,7 +58,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\aspire\Krafter.Aspire.ServiceDefaults\Krafter.Aspire.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\Shared\Krafter.Shared\Krafter.Shared.csproj" />
+    <ProjectReference Include="..\Krafter.Shared\Krafter.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

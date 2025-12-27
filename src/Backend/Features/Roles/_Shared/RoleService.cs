@@ -3,7 +3,7 @@ using Backend.Common.Interfaces;
 using Backend.Features.Users._Shared;
 using Backend.Infrastructure.Persistence;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Roles;
+using Krafter.Shared.Contracts.Roles;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

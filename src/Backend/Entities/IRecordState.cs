@@ -1,4 +1,4 @@
-﻿using Krafter.Shared.Entities.Enums;
+﻿using Krafter.Shared.Common.Enums;
 
 namespace Backend.Entities;
 

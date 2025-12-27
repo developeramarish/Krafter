@@ -9,8 +9,8 @@ using Backend.Infrastructure.Persistence;
 using Krafter.Shared.Common.Auth;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Roles;
-using Krafter.Shared.Features.Tenants;
+using Krafter.Shared.Contracts.Roles;
+using Krafter.Shared.Contracts.Tenants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Roles;
+using Krafter.Shared.Contracts.Roles;
 
 namespace Backend.Features.Roles._Shared;
 

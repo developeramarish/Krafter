@@ -4,7 +4,7 @@ using Backend.Features.Roles._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Roles;
+using Krafter.Shared.Contracts.Roles;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

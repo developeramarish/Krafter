@@ -12,7 +12,7 @@ using Backend.Features.Tenants._Shared;
 using Krafter.Shared.Common;
 using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
-using Krafter.Shared.Features.Tenants;
+using Krafter.Shared.Contracts.Tenants;
 
 namespace Backend.Features.Tenants;
 
