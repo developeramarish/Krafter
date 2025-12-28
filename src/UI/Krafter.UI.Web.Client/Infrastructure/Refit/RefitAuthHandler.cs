@@ -2,12 +2,15 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Krafter.UI.Web.Client.Features.Auth._Shared;
+using Krafter.UI.Web.Client.Infrastructure.Http;
 using Krafter.UI.Web.Client.Infrastructure.Storage;
 
 namespace Krafter.UI.Web.Client.Infrastructure.Refit;
 
 /// <summary>
 /// DelegatingHandler that injects Bearer token and handles token refresh for Refit clients.
+/// Uses TokenSynchronizationManager to prevent multiple concurrent refresh attempts when
+/// multiple API calls detect an expired token simultaneously.
 /// </summary>
 public class RefitAuthHandler(
     IKrafterLocalStorageService localStorage,
@@ -34,15 +37,24 @@ public class RefitAuthHandler(
         // For non-public paths, check if token needs refresh
         if (!isPublicPath && !string.IsNullOrEmpty(accessToken) && IsTokenExpired(accessToken))
         {
-            logger.LogInformation("Token expired, attempting refresh before request to {Path}", path);
-            try
+            // Check if a recent sync already happened (another concurrent request may have refreshed)
+            if (TokenSynchronizationManager.HasRecentSync())
             {
-                await authenticationService.RefreshAsync();
+                logger.LogInformation("Recent token refresh detected, fetching updated token for {Path}", path);
                 accessToken = await localStorage.GetCachedAuthTokenAsync();
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogWarning(ex, "Token refresh failed before request");
+                logger.LogInformation("Token expired, attempting refresh before request to {Path}", path);
+                try
+                {
+                    await authenticationService.RefreshAsync();
+                    accessToken = await localStorage.GetCachedAuthTokenAsync();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Token refresh failed before request");
+                }
             }
         }
 
@@ -58,26 +70,36 @@ public class RefitAuthHandler(
         // Handle 401 for non-public paths - attempt refresh and retry once
         if (response.StatusCode == HttpStatusCode.Unauthorized && !isPublicPath)
         {
-            logger.LogInformation("Received 401, attempting token refresh and retry for {Path}", path);
-            try
+            // Check if a recent sync already happened before attempting refresh
+            if (TokenSynchronizationManager.HasRecentSync())
             {
-                bool refreshed = await authenticationService.RefreshAsync();
-                if (refreshed)
+                logger.LogInformation("Received 401 but recent refresh detected, retrying with updated token for {Path}", path);
+                accessToken = await localStorage.GetCachedAuthTokenAsync();
+            }
+            else
+            {
+                logger.LogInformation("Received 401, attempting token refresh and retry for {Path}", path);
+                try
                 {
-                    accessToken = await localStorage.GetCachedAuthTokenAsync();
-                    if (!string.IsNullOrEmpty(accessToken))
+                    bool refreshed = await authenticationService.RefreshAsync();
+                    if (refreshed)
                     {
-                        // Clone request and retry
-                        HttpRequestMessage retryRequest = await CloneRequestAsync(request);
-                        retryRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                        response.Dispose();
-                        response = await base.SendAsync(retryRequest, cancellationToken);
+                        accessToken = await localStorage.GetCachedAuthTokenAsync();
                     }
                 }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Token refresh failed after 401");
+                }
             }
-            catch (Exception ex)
+
+            // Retry with updated token if available
+            if (!string.IsNullOrEmpty(accessToken))
             {
-                logger.LogWarning(ex, "Token refresh failed after 401");
+                HttpRequestMessage retryRequest = await CloneRequestAsync(request);
+                retryRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                response.Dispose();
+                response = await base.SendAsync(retryRequest, cancellationToken);
             }
         }
 
