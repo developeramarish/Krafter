@@ -25,12 +25,18 @@ public class AuthenticationService(
     public async Task LogoutAsync(string methodName)
     {
         logger.LogInformation("Logging out user via method: {MethodName}", methodName);
+        
+        // Clear local storage first for WASM to ensure clean state before any events fire
         if (formFactor.GetFormFactor() is "WebAssembly")
         {
             await localStorage.ClearCacheAsync();
         }
-
+        
+        // apiService.LogoutAsync handles:
+        // - WASM (ClientSideApiService): Calls BFF /tokens/logout to clear HttpOnly cookies, then clears local storage
+        // - Server (ServerSideApiService): Clears cookies and hybrid cache directly
         await apiService.LogoutAsync(CancellationToken.None);
+        
         LoginChange?.Invoke("");
         await HandleNavigationToLogin(true);
     }
