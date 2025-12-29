@@ -1,4 +1,4 @@
-﻿using Krafter.Shared.Common.Models;
+using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Users;
 using Krafter.UI.Web.Client.Infrastructure.Refit;
 using Mapster;
@@ -46,48 +46,7 @@ public partial class CreateOrUpdateUser(
         if (UserInput is not null)
         {
             isBusy = true;
-            CreateUserRequest finalInput = new();
-            if (string.IsNullOrWhiteSpace(input.Id))
-            {
-                finalInput = input;
-            }
-            else
-            {
-                finalInput.Id = input.Id;
-                if (input.Email != OriginalCreateUserRequest.Email)
-                {
-                    finalInput.Email = input.Email;
-                }
-
-                if (input.FirstName != OriginalCreateUserRequest.FirstName)
-                {
-                    finalInput.FirstName = input.FirstName;
-                }
-
-                if (input.LastName != OriginalCreateUserRequest.LastName)
-                {
-                    finalInput.LastName = input.LastName;
-                }
-
-                if (input.PhoneNumber != OriginalCreateUserRequest.PhoneNumber)
-                {
-                    finalInput.PhoneNumber = input.PhoneNumber;
-                }
-
-                if (input.UserName != OriginalCreateUserRequest.UserName)
-                {
-                    finalInput.UserName = input.UserName;
-                }
-
-                if (!input.Roles.ToHashSet().SetEquals(OriginalCreateUserRequest.Roles))
-                {
-                    finalInput.Roles = input.Roles;
-                }
-
-                finalInput.UpdateTenantEmail = true;
-            }
-
-            Response? result = await usersApi.CreateOrUpdateUserAsync(finalInput);
+            Response? result = await usersApi.CreateOrUpdateUserAsync(input);
             isBusy = false;
             StateHasChanged();
             if (result is not null && result.IsError == false)

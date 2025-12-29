@@ -45,8 +45,8 @@ public interface IUsersApi
     [Get("/users/permissions")]
     public Task<Response<List<string>>> GetPermissionsAsync(CancellationToken cancellationToken = default);
 
-    [Get("/users/roles")]
-    public Task<Response<List<UserRoleDto>>> GetUserRolesAsync([Query] string userId,
+    [Get("/users/get-roles/{userId}")]
+    public Task<Response<List<UserRoleDto>>> GetUserRolesAsync(string userId,
         CancellationToken cancellationToken = default);
 
     [Post("/users/change-password")]

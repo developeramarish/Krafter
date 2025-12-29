@@ -1,4 +1,4 @@
-﻿using Krafter.Shared.Common.Auth.Permissions;
+using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Roles;
 using Krafter.UI.Web.Client.Infrastructure.Refit;
@@ -57,8 +57,8 @@ public partial class CreateOrUpdateRole(
                                 IsRoot = o.IsRoot,
                                 FinalPermission = KrafterPermission.NameFor(o.Action, o.Resource)
                             }))).ToList();
-                Response<List<string>>? rolePermissions = await rolesApi.GetRolePermissionsAsync(UserDetails.Id);
-                CreateUserRequest.Permissions = rolePermissions?.Data ?? new List<string>();
+                Response<RoleDto>? rolePermissions = await rolesApi.GetRolePermissionsAsync(UserDetails.Id);
+                CreateUserRequest.Permissions = rolePermissions?.Data?.Permissions ?? new List<string>();
                 OriginalCreateUserRequest.Permissions = CreateUserRequest.Permissions;
             }
         }
@@ -69,32 +69,7 @@ public partial class CreateOrUpdateRole(
         if (UserDetails is not null)
         {
             isBusy = true;
-            CreateOrUpdateRoleRequest finalInput = new();
-            if (string.IsNullOrWhiteSpace(input.Id))
-            {
-                finalInput = input;
-            }
-            else
-            {
-                finalInput.Id = input.Id;
-                if (input.Name != OriginalCreateUserRequest.Name)
-                {
-                    finalInput.Name = input.Name;
-                }
-
-                if (input.Description != OriginalCreateUserRequest.Description)
-                {
-                    finalInput.Description = input.Description;
-                }
-
-
-                if (!input.Permissions.ToHashSet().SetEquals(OriginalCreateUserRequest.Permissions))
-                {
-                    finalInput.Permissions = input.Permissions;
-                }
-            }
-
-            Response? result = await rolesApi.CreateOrUpdateRoleAsync(finalInput);
+            Response? result = await rolesApi.CreateOrUpdateRoleAsync(input);
             isBusy = false;
             StateHasChanged();
             if (result is null || result is { IsError: true })
