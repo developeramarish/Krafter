@@ -35,15 +35,7 @@ public partial class SingleSelectUserDropDownDataGrid(
         if (!string.IsNullOrWhiteSpace(RoleId))
         {
             Response<PaginationResponse<UserInfo>> response = await api.CallAsync(() => usersApi.GetUsersByRoleAsync(
-                RoleId,
-                GetRequestInput.Id,
-                GetRequestInput.History,
-                GetRequestInput.IsDeleted,
-                GetRequestInput.Query,
-                GetRequestInput.Filter,
-                GetRequestInput.OrderBy,
-                GetRequestInput.SkipCount,
-                GetRequestInput.MaxResultCount), showErrorNotification: true);
+                RoleId, GetRequestInput), showErrorNotification: true);
             if (response is { Data.Items: not null })
             {
                 Data = response.Data.Items.Where(c => !IdsToDisable.Contains(c.Id ?? "")).ToList();
@@ -53,14 +45,7 @@ public partial class SingleSelectUserDropDownDataGrid(
         else
         {
             Response<PaginationResponse<UserDto>> response = await api.CallAsync(() => usersApi.GetUsersAsync(
-                GetRequestInput.Id,
-                GetRequestInput.History,
-                GetRequestInput.IsDeleted,
-                GetRequestInput.Query,
-                GetRequestInput.Filter,
-                GetRequestInput.OrderBy,
-                GetRequestInput.SkipCount,
-                GetRequestInput.MaxResultCount), showErrorNotification: true);
+                GetRequestInput), showErrorNotification: true);
             if (response is { Data.Items: not null })
             {
                 TotalCount = response.Data.TotalCount;

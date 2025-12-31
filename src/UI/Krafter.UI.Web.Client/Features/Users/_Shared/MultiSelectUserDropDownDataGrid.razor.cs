@@ -48,15 +48,7 @@ public partial class MultiSelectUserDropDownDataGrid(
         GetRequestInput.OrderBy = args.OrderBy;
         IsLoading = true;
 
-        response = await api.CallAsync(() => usersApi.GetUsersAsync(
-            GetRequestInput.Id,
-            GetRequestInput.History,
-            GetRequestInput.IsDeleted,
-            GetRequestInput.Query,
-            GetRequestInput.Filter,
-            GetRequestInput.OrderBy,
-            GetRequestInput.SkipCount,
-            GetRequestInput.MaxResultCount), showErrorNotification: true);
+        response = await api.CallAsync(() => usersApi.GetUsersAsync(GetRequestInput), showErrorNotification: true);
         if (response is { Data.Items: not null })
         {
             Data = response.Data.Items.Where(c => !IdsToDisable.Contains(c.Id ?? "")).ToList();

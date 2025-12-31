@@ -8,27 +8,13 @@ public interface IUsersApi
 {
     [Get("/users/get")]
     public Task<Response<PaginationResponse<UserDto>>> GetUsersAsync(
-        [Query] string? id = null,
-        [Query] bool history = false,
-        [Query] bool isDeleted = false,
-        [Query] string? query = null,
-        [Query] string? filter = null,
-        [Query] string? orderBy = null,
-        [Query] int skipCount = 0,
-        [Query] int maxResultCount = 10,
+        [Query] GetRequestInput request,
         CancellationToken cancellationToken = default);
 
     [Get("/users/by-role/{roleId}")]
     public Task<Response<PaginationResponse<UserInfo>>> GetUsersByRoleAsync(
         string roleId,
-        [Query] string? id = null,
-        [Query] bool history = false,
-        [Query] bool isDeleted = false,
-        [Query] string? query = null,
-        [Query] string? filter = null,
-        [Query] string? orderBy = null,
-        [Query] int skipCount = 0,
-        [Query] int maxResultCount = 10,
+        [Query] GetRequestInput request,
         CancellationToken cancellationToken = default);
 
     [Post("/users/create-or-update")]

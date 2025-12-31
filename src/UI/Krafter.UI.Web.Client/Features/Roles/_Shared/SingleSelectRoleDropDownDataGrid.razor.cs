@@ -31,16 +31,7 @@ public partial class SingleSelectRoleDropDownDataGrid(
         GetRequestInput.Filter = args.Filter;
         GetRequestInput.OrderBy = args.OrderBy;
         IsLoading = true;
-        response = await api.CallAsync(() => rolesApi.GetRolesAsync(
-            GetRequestInput.Id,
-            GetRequestInput.History,
-            GetRequestInput.IsDeleted,
-            GetRequestInput.Query,
-            GetRequestInput.Filter,
-            GetRequestInput.OrderBy,
-            GetRequestInput.SkipCount,
-            GetRequestInput.MaxResultCount,
-            CancellationToken.None), showErrorNotification: true);
+        response = await api.CallAsync(() => rolesApi.GetRolesAsync(GetRequestInput), showErrorNotification: true);
         if (response is { Data.Items: not null })
         {
             Data = response.Data.Items.Where(c => !IdsToDisable.Contains(c.Id)).ToList();

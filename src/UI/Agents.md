@@ -174,15 +174,8 @@ public partial class Products(
             requestInput.SkipCount = 0;
 
         // CRITICAL: Use ApiCallService wrapper for ALL API calls
-        response = await api.CallAsync(() => productsApi.GetProductsAsync(
-            id: requestInput.Id,
-            history: requestInput.History,
-            isDeleted: requestInput.IsDeleted,
-            query: requestInput.Query,
-            filter: requestInput.Filter,
-            orderBy: requestInput.OrderBy,
-            skipCount: requestInput.SkipCount,
-            maxResultCount: requestInput.MaxResultCount));
+        // Pass GetRequestInput directly - Refit serializes all properties as query params
+        response = await api.CallAsync(() => productsApi.GetProductsAsync(requestInput));
         
         IsLoading = false;
         await InvokeAsync(StateHasChanged);
@@ -451,16 +444,11 @@ namespace Krafter.UI.Web.Client.Infrastructure.Refit;
 
 public interface IProductsApi
 {
+    // Use [Query] with GetRequestInput - Refit serializes all properties as query params
+    // This matches backend's [AsParameters] GetRequestInput pattern
     [Get("/products/get")]
     Task<Response<PaginationResponse<ProductDto>>> GetProductsAsync(
-        [Query] string? id = null,
-        [Query] bool history = false,
-        [Query] bool isDeleted = false,
-        [Query] string? query = null,
-        [Query] string? filter = null,
-        [Query] string? orderBy = null,
-        [Query] int skipCount = 0,
-        [Query] int maxResultCount = 10,
+        [Query] GetRequestInput request,
         CancellationToken cancellationToken = default);
 
     [Post("/products/create-or-update")]
@@ -524,7 +512,9 @@ services.AddRefitClient<IWeatherApi>(refitSettings)
    public interface IProductsApi
    {
        [Get("/products/get")]
-       Task<Response<PaginationResponse<ProductDto>>> GetProductsAsync(...);
+       Task<Response<PaginationResponse<ProductDto>>> GetProductsAsync(
+           [Query] GetRequestInput request,
+           CancellationToken cancellationToken = default);
        
        [Post("/products/create-or-update")]
        Task<Response> CreateOrUpdateProductAsync([Body] CreateProductRequest request, ...);
@@ -941,8 +931,9 @@ Task<Response<PaginationResponse<ProductDto>>> GetProductsAsync(
 | Not setting `LocalAppSate.CurrentPageTitle` | Set in `OnInitializedAsync` |
 | Creating DTOs in UI project | Use DTOs from `Krafter.Shared.Contracts.*` |
 | Missing permission attribute on page | Add `@attribute [MustHavePermission(...)]` |
+| Passing individual query params to Refit Get methods | Use `[Query] GetRequestInput` - matches backend's `[AsParameters]` pattern |
 
 ---
 Last Updated: 2025-12-31
-Verified Against: Features/Users/Users.razor.cs, Features/Users/CreateOrUpdateUser.razor.cs, Features/Roles/CreateOrUpdateRole.razor.cs, Infrastructure/Services/ApiCallService.cs
+Verified Against: Features/Users/Users.razor.cs, Features/Roles/Roles.razor.cs, Features/Tenants/Tenants.razor.cs, Infrastructure/Refit/IUsersApi.cs, Infrastructure/Refit/IRolesApi.cs, Infrastructure/Refit/ITenantsApi.cs
 ---

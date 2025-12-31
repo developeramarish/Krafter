@@ -8,13 +8,7 @@ public interface ITenantsApi
 {
     [Get("/tenants/get")]
     public Task<Response<PaginationResponse<TenantDto>>> GetTenantsAsync(
-        [Query] string? id = null,
-        [Query] string? filter = null,
-        [Query] string? orderBy = null,
-        [Query] int skipCount = 0,
-        [Query] int maxResultCount = 10,
-        [Query] bool history = false,
-        [Query] bool isDeleted = false,
+        [Query] GetRequestInput request,
         CancellationToken cancellationToken = default);
 
     [Post("/tenants/create-or-update")]
