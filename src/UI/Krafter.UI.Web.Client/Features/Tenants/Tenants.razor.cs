@@ -1,4 +1,5 @@
-﻿using Krafter.Shared.Common.Auth.Permissions;
+using Krafter.Shared.Common;
+using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Enums;
 using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Tenants;
@@ -39,14 +40,7 @@ public partial class Tenants(
             requestInput.SkipCount = 0;
         }
 
-        response = await api.CallAsync(() => tenantsApi.GetTenantsAsync(
-            requestInput.Id,
-            history: requestInput.History,
-            isDeleted: requestInput.IsDeleted,
-            filter: requestInput.Filter,
-            orderBy: requestInput.OrderBy,
-            skipCount: requestInput.SkipCount,
-            maxResultCount: requestInput.MaxResultCount));
+        response = await api.CallAsync(() => tenantsApi.GetTenantsAsync(requestInput));
         IsLoading = false;
         await InvokeAsync(StateHasChanged);
     }

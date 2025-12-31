@@ -1,4 +1,5 @@
-﻿using Krafter.Shared.Common.Auth.Permissions;
+using Krafter.Shared.Common;
+using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Enums;
 using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Users;
@@ -53,15 +54,7 @@ public partial class Users(
             requestInput.SkipCount = 0;
         }
 
-        response = await api.CallAsync(() => usersApi.GetUsersAsync(
-            requestInput.Id,
-            requestInput.History,
-            requestInput.IsDeleted,
-            requestInput.Query,
-            requestInput.Filter,
-            requestInput.OrderBy,
-            requestInput.SkipCount,
-            requestInput.MaxResultCount));
+        response = await api.CallAsync(() => usersApi.GetUsersAsync(requestInput));
         IsLoading = false;
         await InvokeAsync(StateHasChanged);
     }

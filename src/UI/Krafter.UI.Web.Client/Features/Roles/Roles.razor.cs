@@ -1,4 +1,5 @@
-﻿using Krafter.Shared.Common.Auth.Permissions;
+using Krafter.Shared.Common;
+using Krafter.Shared.Common.Auth.Permissions;
 using Krafter.Shared.Common.Enums;
 using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Roles;
@@ -44,15 +45,7 @@ public partial class Roles(
             RequestInput.SkipCount = 0;
         }
 
-        response = await api.CallAsync(() => rolesApi.GetRolesAsync(
-            RequestInput.Id,
-            RequestInput.History,
-            RequestInput.IsDeleted,
-            RequestInput.Query,
-            RequestInput.Filter,
-            RequestInput.OrderBy,
-            RequestInput.SkipCount,
-            RequestInput.MaxResultCount));
+        response = await api.CallAsync(() => rolesApi.GetRolesAsync(RequestInput));
 
         IsLoading = false;
         await InvokeAsync(StateHasChanged);
