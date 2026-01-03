@@ -262,7 +262,7 @@ static void MapAuthTokenEndpoints(WebApplication app)
         return Results.Json(res, statusCode: res.StatusCode);
     }).RequireAuthorization();
 
-    app.MapPost("/tokens/create", async ([FromBody] TokenRequest request, IApiService apiService,
+    app.MapPost("/tokens", async ([FromBody] TokenRequest request, IApiService apiService,
         [FromServices] IHttpClientFactory clientFactory) =>
     {
         Response<TokenResponse> res = await apiService.CreateTokenAsync(request, CancellationToken.None);
