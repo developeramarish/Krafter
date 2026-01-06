@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Krafter.Shared.Common;
 using Krafter.UI.Web.Client.Features.Auth._Shared;
 using Krafter.UI.Web.Client.Infrastructure.Http;
 using Krafter.UI.Web.Client.Infrastructure.Storage;
@@ -15,8 +16,14 @@ public class RefitAuthHandler(
     // Public endpoints that must NOT trigger a refresh or require an auth token
     private static readonly string[] PublicPaths =
     [
-        "/tokens/refresh", "/tokens/create", "/tokens/current", "/tokens/logout",
-        "/external-auth", "/external-auth/google", "/app-info", "/seed", "/login"
+        $"/{KrafterRoute.Tokens}",
+        $"/{KrafterRoute.ExternalAuth}",
+        $"/{KrafterRoute.AppInfo}",
+        $"/{KrafterRoute.Tokens}/{RouteSegment.Refresh}",
+        $"/{KrafterRoute.ExternalAuth}/{RouteSegment.Google}",
+        $"/{KrafterRoute.Tokens}/{RouteSegment.Logout}",
+        $"/{KrafterRoute.Tenants}/{RouteSegment.SeedData}",
+        "/login"
     ];
 
     protected override async Task<HttpResponseMessage> SendAsync(
@@ -68,7 +75,8 @@ public class RefitAuthHandler(
             // Check if a recent sync already happened before attempting refresh
             if (TokenSynchronizationManager.HasRecentSync())
             {
-                logger.LogInformation("Received 401 but recent refresh detected, retrying with updated token for {Path}", path);
+                logger.LogInformation(
+                    "Received 401 but recent refresh detected, retrying with updated token for {Path}", path);
                 accessToken = await localStorage.GetCachedAuthTokenAsync();
             }
             else

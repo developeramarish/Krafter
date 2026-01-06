@@ -107,40 +107,26 @@ public class ClientSideApiService(
     {
         try
         {
-            string? token = await localStorage.GetCachedAuthTokenAsync();
-            string? refreshToken = await localStorage.GetCachedRefreshTokenAsync();
-            DateTime authTokenExpiryDate = await localStorage.GetAuthTokenExpiryDate();
-            DateTime refreshTokenExpiry = await localStorage.GetRefreshTokenExpiryDate();
-            ICollection<string>? permissions = await localStorage.GetCachedPermissionsAsync();
-
-            if (!string.IsNullOrWhiteSpace(token) && !string.IsNullOrWhiteSpace(refreshToken))
-            {
-                return new Response<TokenResponse>
-                {
-                    Data = new TokenResponse(
-                        token,
-                        refreshToken,
-                        refreshTokenExpiry,
-                        authTokenExpiryDate,
-                        permissions?.ToList() ?? []),
-                    StatusCode = (int)HttpStatusCode.OK
-                };
-            }
-
+            Response<TokenResponse> response = await authApi.GetCurrentTokenAsync(cancellationToken);
+            return response;
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Error during client-side token retrieval");
             return new Response<TokenResponse>
             {
                 IsError = true,
-                Message = "No valid token found. Please log in again.",
-                StatusCode = (int)HttpStatusCode.Unauthorized
+                Message = "Failed to retrieve token. Please log in again.",
+                StatusCode = (int)ex.StatusCode
             };
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error getting current token");
+            logger.LogError(ex, "Error during client-side token retrieval");
             return new Response<TokenResponse>
             {
                 IsError = true,
-                Message = "Failed to get current token.",
+                Message = "Failed to retrieve token. Please log in again.",
                 StatusCode = (int)HttpStatusCode.InternalServerError
             };
         }
@@ -157,7 +143,7 @@ public class ClientSideApiService(
         {
             logger.LogError(ex, "Error calling logout endpoint");
         }
-        
+
         // Clear local storage regardless of BFF call result
         await localStorage.ClearCacheAsync();
     }
