@@ -1,4 +1,3 @@
-using Krafter.Shared.Common;
 using Krafter.Shared.Common.Models;
 using Krafter.Shared.Contracts.Auth;
 using Refit;
@@ -21,4 +20,7 @@ public interface IAuthApi
 
     [Post("/tokens/logout")]
     public Task LogoutAsync(CancellationToken cancellationToken = default);
+
+    [Get("/tokens/current")]
+    public Task<Response<TokenResponse>> GetCurrentTokenAsync(CancellationToken cancellationToken = default);
 }

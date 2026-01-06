@@ -1,4 +1,4 @@
-﻿namespace Krafter.Shared.Common;
+namespace Krafter.Shared.Common;
 
 /// <summary>
 /// Base route prefixes for API endpoints (e.g., "users", "roles").
@@ -34,56 +34,58 @@ public static class RouteSegment
     // ═══════════════════════════════════════════════════════════════
     // STANDARD REST - Resource operations
     // ═══════════════════════════════════════════════════════════════
-    
+
     /// <summary>GET /resources/{id}, PUT /resources/{id}, DELETE /resources/{id}</summary>
     public const string ById = "{id}";
-    
+
     // ═══════════════════════════════════════════════════════════════
     // NESTED RESOURCES - Related data
     // ═══════════════════════════════════════════════════════════════
-    
+
     /// <summary>GET /users/{userId}/roles - Get roles for a user</summary>
     public const string UserRoles = "{userId}/roles";
-    
+
     /// <summary>GET /roles/{roleId}/permissions - Get permissions for a role</summary>
     public const string RolePermissions = "{roleId}/permissions";
-    
+
     /// <summary>GET /users/by-role/{roleId} - Filter users by role</summary>
     public const string ByRole = "by-role/{roleId}";
-    
+
     /// <summary>GET /users/permissions - Get current user's permissions</summary>
     public const string Permissions = "permissions";
-    
+
     // ═══════════════════════════════════════════════════════════════
     // AUTH ACTIONS - Token operations
     // ═══════════════════════════════════════════════════════════════
-    
+
     /// <summary>POST /tokens/refresh</summary>
     public const string Refresh = "refresh";
-    
+
+    public const string Current = "current";
+
     /// <summary>POST /tokens/logout</summary>
     public const string Logout = "logout";
-    
+
     /// <summary>POST /external-auth/google</summary>
     public const string Google = "google";
-    
+
     // ═══════════════════════════════════════════════════════════════
     // USER ACTIONS - Password management
     // ═══════════════════════════════════════════════════════════════
-    
+
     /// <summary>POST /users/change-password</summary>
     public const string ChangePassword = "change-password";
-    
+
     /// <summary>POST /users/forgot-password</summary>
     public const string ForgotPassword = "forgot-password";
-    
+
     /// <summary>POST /users/reset-password</summary>
     public const string ResetPassword = "reset-password";
-    
+
     // ═══════════════════════════════════════════════════════════════
     // TENANT ACTIONS
     // ═══════════════════════════════════════════════════════════════
-    
+
     /// <summary>POST /tenants/seed-data</summary>
     public const string SeedData = "seed-data";
 }

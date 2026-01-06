@@ -64,11 +64,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 string? refreshToken = context.Request.Cookies[StorageConstants.Local.RefreshToken];
 
                 // skip refresh logic for api endpoints we need this only in the case of prerendered Blazor components
-                if (context.Request.Path.StartsWithSegments("/tokens/refresh") ||
-                    context.Request.Path.StartsWithSegments("/tokens/create") ||
-                    context.Request.Path.StartsWithSegments("/external-auth/google") ||
-                    context.Request.Path.StartsWithSegments("/tokens/current") ||
-                    context.Request.Path.StartsWithSegments("/tokens/logout")
+                if (context.Request.Path.StartsWithSegments($"/{KrafterRoute.Tokens}/{RouteSegment.Refresh}") ||
+                    context.Request.Path.StartsWithSegments($"/{KrafterRoute.Tokens}") ||
+                    context.Request.Path.StartsWithSegments($"/{KrafterRoute.ExternalAuth}/{RouteSegment.Google}") ||
+                    context.Request.Path.StartsWithSegments($"/{KrafterRoute.Tokens}/{RouteSegment.Current}") ||
+                    context.Request.Path.StartsWithSegments($"/{KrafterRoute.Tokens}/{RouteSegment.Logout}")
                    )
                 {
                     context.Token = currentToken;
@@ -257,7 +257,7 @@ static bool IsTokenExpired(string token)
 
 static void MapAuthTokenEndpoints(WebApplication app)
 {
-    app.MapGet($"/{KrafterRoute.Tokens}/current", async (IApiService apiService) =>
+    app.MapGet($"/{KrafterRoute.Tokens}/{RouteSegment.Current}", async (IApiService apiService) =>
     {
         Response<TokenResponse> res = await apiService.GetCurrentTokenAsync(CancellationToken.None);
         return Results.Json(res, statusCode: res.StatusCode);
@@ -269,18 +269,20 @@ static void MapAuthTokenEndpoints(WebApplication app)
         Response<TokenResponse> res = await apiService.CreateTokenAsync(request, CancellationToken.None);
         return Results.Json(res, statusCode: res.StatusCode);
     });
-    app.MapPost($"/{KrafterRoute.Tokens}/{RouteSegment.Refresh}", async ([FromBody] RefreshTokenRequest request, IApiService apiService,
+    app.MapPost($"/{KrafterRoute.Tokens}/{RouteSegment.Refresh}", async ([FromBody] RefreshTokenRequest request,
+        IApiService apiService,
         [FromServices] IHttpClientFactory clientFactory) =>
     {
         Response<TokenResponse> tokenResponse = await apiService.RefreshTokenAsync(request, CancellationToken.None);
         return Results.Json(tokenResponse, statusCode: tokenResponse.StatusCode);
     });
 
-    app.MapPost($"/{KrafterRoute.ExternalAuth}/{RouteSegment.Google}", async ([FromBody] TokenRequest request, IApiService apiService) =>
-    {
-        Response<TokenResponse> tokenResponse = await apiService.ExternalAuthAsync(request, CancellationToken.None);
-        return Results.Json(tokenResponse, statusCode: tokenResponse.StatusCode);
-    });
+    app.MapPost($"/{KrafterRoute.ExternalAuth}/{RouteSegment.Google}",
+        async ([FromBody] TokenRequest request, IApiService apiService) =>
+        {
+            Response<TokenResponse> tokenResponse = await apiService.ExternalAuthAsync(request, CancellationToken.None);
+            return Results.Json(tokenResponse, statusCode: tokenResponse.StatusCode);
+        });
 
     app.MapPost($"/{KrafterRoute.Tokens}/{RouteSegment.Logout}", async (IApiService apiService) =>
     {
